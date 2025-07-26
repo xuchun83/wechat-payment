@@ -214,14 +214,14 @@
             <div class="section-title">基础信息</div>
             <div class="info-row">
                 <span class="info-label">住户姓名</span>
-                <span class="info-value">张*</span>
+                <span class="info-value" id="userName">张*</span>
             </div>
         </div>
         
         <div class="content">
             <div class="section-title">房间信息</div>
             <div class="info-row">
-                <span class="info-value">新和平一期3楼298号房</span>
+                <span class="info-value" id="roomInfo">新和平一期3楼298号房</span>
             </div>
         </div>
         
@@ -233,7 +233,7 @@
         
         <div class="bottom-bar">
             <div class="total-amount">
-                总计 <span class="amount">¥ 0.00</span>
+                总计 <span class="amount" id="totalAmount">¥ 0.00</span>
             </div>
             <button class="pay-button" onclick="showPaymentPage()">去支付</button>
         </div>
@@ -257,6 +257,34 @@
     </div>
     
     <script>
+        // 解析URL参数
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                name: params.get('name') || '张*',
+                room: params.get('room') || '新和平一期3楼298号房',
+                amount: params.get('amount') || '0.00',
+                id: params.get('id') || ''
+            };
+        }
+        
+        // 初始化页面内容
+        function initPage() {
+            const params = getUrlParams();
+            
+            // 更新用户信息
+            document.getElementById('userName').textContent = params.name;
+            document.getElementById('roomInfo').textContent = params.room;
+            document.getElementById('totalAmount').textContent = '¥ ' + params.amount;
+            
+            // 如果金额为0，显示账单信息为空的提示
+            if (params.amount === '0.00') {
+                document.querySelector('.error-message').textContent = '账单信息为空';
+            } else {
+                document.querySelector('.error-message').textContent = '支付金额：¥' + params.amount;
+            }
+        }
+        
         function showPaymentPage() {
             document.getElementById('paymentPage').style.display = 'block';
         }
@@ -272,8 +300,12 @@
             // 这里可以添加时间显示逻辑
         }
         
-        updateTime();
-        setInterval(updateTime, 60000);
+        // 页面加载时初始化
+        window.addEventListener('load', function() {
+            initPage();
+            updateTime();
+            setInterval(updateTime, 60000);
+        });
     </script>
 </body>
 </html>
